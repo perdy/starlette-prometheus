@@ -1,0 +1,41 @@
+[tool.poetry]
+name = "starlette-prometheus"
+version = "0.1.0"
+description = "Prometheus integration for Starlette"
+authors = ["José Antonio Perdiguero López <perdy@perdy.io>"]
+license = "GPL-3.0+"
+readme = "README.md"
+repository = "https://github.com/PeRDy/starlette-prometheus"
+keywords = ["starlette", "prometheus", "metrics"]
+include = []
+exclude = []
+
+[tool.poetry.dependencies]
+python = "^3.6"
+starlette = ">=0.9.0"
+prometheus_client = "^0.5.0"
+
+[tool.poetry.dev-dependencies]
+pytest = "^3.6"
+pytest-xdist = "^1.22"
+pytest-cov = "^2.5"
+tox = "^3.0"
+clinner = "^1.10"
+ipython = "^6.4"
+requests = "^2.19"
+ipdb = "^0.11.0"
+black = "^18.3-alpha.0"
+isort = "^4.3"
+python-multipart = "^0.0.5"
+
+[tool.black]
+line-length = 120
+include = '\.pyi?$'
+exclude = '''
+/(
+    \.git
+  | \.tox
+  | build
+  | dist
+)/
+'''

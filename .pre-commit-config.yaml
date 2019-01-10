@@ -1,0 +1,40 @@
+-   repo: git@github.com:pre-commit/pre-commit-hooks
+    rev: master
+    hooks:
+    -   id: check-added-large-files
+    -   id: check-merge-conflict
+    -   id: check-xml
+    -   id: check-yaml
+    -   id: debug-statements
+    -   id: name-tests-test
+        args:
+        - --django
+    -   id: pretty-format-json
+        args:
+        - --autofix
+        - --indent=2
+        exclude: ^package-lock.json$
+-   repo: local
+    hooks:
+    -   id: flake8
+        name: Flake8 - Code Linter
+        entry: flake8
+        language: system
+        types: [python]
+    -   id: black
+        name: Black - Code Style
+        entry: black
+        args:
+        - -q
+        - --safe
+        - --line-length=120
+        language: system
+        types: [python]
+    -   id: isort
+        name: Isort - Sort Imports
+        entry: isort
+        args:
+        - -e
+        - -w 120
+        language: system
+        types: [python]
