@@ -22,6 +22,20 @@ Prometheus integration for Starlette.
 $ pip install starlette-prometheus
 ```
 
+## Usage
+
+A complete example that exposes prometheus metrics endpoint under `/metrics/` path.
+
+```python
+from starlette.applications import Starlette
+from starlette_prometheus import metrics, PrometheusMiddleware
+
+app = Starlette()
+
+app.add_middleware(PrometheusMiddleware)
+app.add_route("/metrics/", metrics)
+```
+
 ## Contributing
 
 This project is absolutely open to contributions so if you have a nice idea, create an issue to let the community 
