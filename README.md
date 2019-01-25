@@ -3,7 +3,7 @@
 [![codecov](https://codecov.io/gh/PeRDy/starlette-prometheus/branch/master/graph/badge.svg)](https://codecov.io/gh/PeRDy/starlette-prometheus)
 [![PyPI version](https://badge.fury.io/py/starlette-prometheus.svg)](https://badge.fury.io/py/starlette-prometheus)
 
-* **Version:** 0.1.0
+* **Version:** 0.1.1
 * **Status:** Production/Stable
 * **Author:** José Antonio Perdiguero López
 
