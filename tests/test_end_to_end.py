@@ -5,27 +5,28 @@ from starlette.testclient import TestClient
 
 from starlette_prometheus import metrics, PrometheusMiddleware
 
-app = Starlette()
-app.add_middleware(PrometheusMiddleware)
-app.add_route("/metrics/", metrics)
-
-
-@app.route("/foo/")
-def foo(request):
-    return PlainTextResponse("Foo")
-
-
-@app.route("/bar/")
-def bar(request):
-    raise ValueError("bar")
-
-
-@pytest.fixture
-def client():
-    return TestClient(app)
-
 
 class TestCasePrometheusMiddleware:
+    @pytest.fixture(scope="class")
+    def app(self):
+        app_ = Starlette()
+        app_.add_middleware(PrometheusMiddleware)
+        app_.add_route("/metrics/", metrics)
+
+        @app_.route("/foo/")
+        def foo(request):
+            return PlainTextResponse("Foo")
+
+        @app_.route("/bar/")
+        def bar(request):
+            raise ValueError("bar")
+
+        return app_
+
+    @pytest.fixture
+    def client(self, app):
+        return TestClient(app)
+
     def test_view_ok(self, client):
         # Do a request
         client.get("/foo/")
@@ -34,10 +35,15 @@ class TestCasePrometheusMiddleware:
         response = client.get("/metrics/")
         metrics_text = response.content.decode()
 
-        # Asserts
+        # Asserts: Requests
         assert 'starlette_requests_total{method="GET",path="/foo/"} 1.0' in metrics_text
+
+        # Asserts: Responses
         assert 'starlette_responses_total{method="GET",path="/foo/",status_code="200"} 1.0' in metrics_text
-        assert 'starlette_requests_in_progress 1.0' in metrics_text  # metrics call is in progress when got the response
+
+        # Asserts: Requests in progress
+        assert 'starlette_requests_in_progress{method="GET",path="/foo/"} 0.0' in metrics_text
+        assert 'starlette_requests_in_progress{method="GET",path="/metrics/"} 1.0' in metrics_text
 
     def test_view_exception(self, client):
         # Do a request
@@ -48,7 +54,12 @@ class TestCasePrometheusMiddleware:
         response = client.get("/metrics/")
         metrics_text = response.content.decode()
 
-        # Asserts
+        # Asserts: Requests
         assert 'starlette_requests_total{method="GET",path="/bar/"} 1.0' in metrics_text
+
+        # Asserts: Responses
         assert 'starlette_exceptions_total{exception_type="ValueError",method="GET",path="/bar/"} 1.0' in metrics_text
-        assert 'starlette_requests_in_progress 1.0' in metrics_text  # metrics call is in progress when got the response
+
+        # Asserts: Requests in progress
+        assert 'starlette_requests_in_progress{method="GET",path="/bar/"} 0.0' in metrics_text
+        assert 'starlette_requests_in_progress{method="GET",path="/metrics/"} 1.0' in metrics_text

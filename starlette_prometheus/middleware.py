@@ -5,7 +5,7 @@ from starlette.middleware.base import BaseHTTPMiddleware, RequestResponseEndpoin
 from starlette.requests import Request
 from starlette.types import ASGIInstance
 
-REQUESTS = Counter("starlette_requests_total", "Total count of requests by mathod and path.", ["method", "path"])
+REQUESTS = Counter("starlette_requests_total", "Total count of requests by method and path.", ["method", "path"])
 RESPONSES = Counter(
     "starlette_responses_total",
     "Total count of responses by method, path and status codes.",
@@ -21,7 +21,11 @@ EXCEPTIONS = Counter(
     "Histogram of exceptions raised by path and exception type",
     ["method", "path", "exception_type"],
 )
-REQUESTS_IN_PROGRESS = Gauge("starlette_requests_in_progress", "Gauge of requests currently being processed")
+REQUESTS_IN_PROGRESS = Gauge(
+    "starlette_requests_in_progress",
+    "Gauge of requests by method and path currently being processed",
+    ["method", "path"],
+)
 
 
 class PrometheusMiddleware(BaseHTTPMiddleware):
@@ -29,7 +33,7 @@ class PrometheusMiddleware(BaseHTTPMiddleware):
         method = request.method
         path = request.url.path
 
-        REQUESTS_IN_PROGRESS.inc()
+        REQUESTS_IN_PROGRESS.labels(method=method, path=path).inc()
         REQUESTS.labels(method=method, path=path).inc()
         try:
             before_time = time.time()
@@ -42,6 +46,6 @@ class PrometheusMiddleware(BaseHTTPMiddleware):
             REQUESTS_PROCESSING_TIME.labels(method=method, path=path).observe(after_time - before_time)
             RESPONSES.labels(method=method, path=path, status_code=response.status_code).inc()
         finally:
-            REQUESTS_IN_PROGRESS.dec()
+            REQUESTS_IN_PROGRESS.labels(method=method, path=path).dec()
 
         return response
