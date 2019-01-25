@@ -9,7 +9,7 @@ from clinner.run import Main
 
 @command(command_type=Type.SHELL, parser_opts={"help": "Build package"})
 def build(*args, **kwargs):
-    return [shlex.split("npm install"), shlex.split("npm run build"), shlex.split("poetry build")]
+    return [shlex.split("poetry build")]
 
 
 @command(
