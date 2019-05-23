@@ -3,7 +3,7 @@ import time
 from prometheus_client import Counter, Gauge, Histogram
 from starlette.middleware.base import BaseHTTPMiddleware, RequestResponseEndpoint
 from starlette.requests import Request
-from starlette.types import ASGIInstance
+from starlette.responses import Response
 
 REQUESTS = Counter("starlette_requests_total", "Total count of requests by method and path.", ["method", "path"])
 RESPONSES = Counter(
@@ -29,7 +29,7 @@ REQUESTS_IN_PROGRESS = Gauge(
 
 
 class PrometheusMiddleware(BaseHTTPMiddleware):
-    async def dispatch(self, request: Request, call_next: RequestResponseEndpoint) -> ASGIInstance:
+    async def dispatch(self, request: Request, call_next: RequestResponseEndpoint) -> Response:
         method = request.method
         path = request.url.path
 
