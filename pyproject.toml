@@ -1,3 +1,7 @@
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"
+
 [tool.poetry]
 name = "starlette-prometheus"
 version = "0.1.1"
@@ -24,9 +28,9 @@ clinner = "^1.10"
 ipython = "^6.4"
 requests = "^2.19"
 ipdb = "^0.11.0"
-black = "^18.3-alpha.0"
+black = {version = "^19.3b0",allows-prereleases = true}
 isort = "^4.3"
-python-multipart = "^0.0.5"
+flake8 = "^3.7"
 
 [tool.black]
 line-length = 120

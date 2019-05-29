@@ -13,17 +13,16 @@
         args:
         - --autofix
         - --indent=2
-        exclude: ^package-lock.json$
 -   repo: local
     hooks:
     -   id: flake8
         name: Flake8 - Code Linter
-        entry: flake8
+        entry: poetry run flake8
         language: system
         types: [python]
     -   id: black
         name: Black - Code Style
-        entry: black
+        entry: poetry run black
         args:
         - -q
         - --safe
@@ -32,9 +31,8 @@
         types: [python]
     -   id: isort
         name: Isort - Sort Imports
-        entry: isort
+        entry: poetry run isort
         args:
         - -e
-        - -w 120
         language: system
         types: [python]
