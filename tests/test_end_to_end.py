@@ -3,7 +3,7 @@ from starlette.applications import Starlette
 from starlette.responses import PlainTextResponse
 from starlette.testclient import TestClient
 
-from starlette_prometheus import metrics, PrometheusMiddleware
+from starlette_prometheus import PrometheusMiddleware, metrics
 
 
 class TestCasePrometheusMiddleware:
