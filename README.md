@@ -1,5 +1,5 @@
 # Starlette Prometheus
-[![Build Status](https://travis-ci.org/perdy/starlette-prometheus.svg?branch=master)](https://travis-ci.org/perdy/starlette-prometheus)
+[![Build Status](https://img.shields.io/circleci/project/github/perdy/flama/master.svg)](https://circleci.com/gh/perdy/flama)
 [![codecov](https://codecov.io/gh/perdy/starlette-prometheus/branch/master/graph/badge.svg)](https://codecov.io/gh/perdy/starlette-prometheus)
 [![PyPI version](https://badge.fury.io/py/starlette-prometheus.svg)](https://badge.fury.io/py/starlette-prometheus)
 
