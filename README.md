@@ -1,9 +1,9 @@
 # Starlette Prometheus
-[![Build Status](https://travis-ci.org/PeRDy/starlette-prometheus.svg?branch=master)](https://travis-ci.org/PeRDy/starlette-prometheus)
-[![codecov](https://codecov.io/gh/PeRDy/starlette-prometheus/branch/master/graph/badge.svg)](https://codecov.io/gh/PeRDy/starlette-prometheus)
+[![Build Status](https://travis-ci.org/perdy/starlette-prometheus.svg?branch=master)](https://travis-ci.org/perdy/starlette-prometheus)
+[![codecov](https://codecov.io/gh/perdy/starlette-prometheus/branch/master/graph/badge.svg)](https://codecov.io/gh/perdy/starlette-prometheus)
 [![PyPI version](https://badge.fury.io/py/starlette-prometheus.svg)](https://badge.fury.io/py/starlette-prometheus)
 
-* **Version:** 0.1.1
+* **Version:** 0.2.0
 * **Status:** Production/Stable
 * **Author:** José Antonio Perdiguero López
 
