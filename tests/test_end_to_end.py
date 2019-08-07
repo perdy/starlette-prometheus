@@ -21,6 +21,10 @@ class TestCasePrometheusMiddleware:
         def bar(request):
             raise ValueError("bar")
 
+        @app_.route("/foo/{bar}/")
+        def foobar(request):
+            return PlainTextResponse(f"Foo: {request.path_params['bar']}")
+
         return app_
 
     @pytest.fixture
@@ -63,3 +67,11 @@ class TestCasePrometheusMiddleware:
         # Asserts: Requests in progress
         assert 'starlette_requests_in_progress{method="GET",path="/bar/"} 0.0' in metrics_text
         assert 'starlette_requests_in_progress{method="GET",path="/metrics/"} 1.0' in metrics_text
+
+    def test_path_substituion(self, client):
+        client.get("/foo/baz")
+
+        response = client.get("/metrics/")
+        metrics_text = response.content.decode()
+
+        assert 'starlette_requests_total{method="GET",path="/foo/{bar}/"} 1.0' in metrics_text

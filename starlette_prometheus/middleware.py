@@ -4,6 +4,7 @@ from prometheus_client import Counter, Gauge, Histogram
 from starlette.middleware.base import BaseHTTPMiddleware, RequestResponseEndpoint
 from starlette.requests import Request
 from starlette.responses import Response
+from starlette.routing import Match
 
 REQUESTS = Counter("starlette_requests_total", "Total count of requests by method and path.", ["method", "path"])
 RESPONSES = Counter(
@@ -31,7 +32,7 @@ REQUESTS_IN_PROGRESS = Gauge(
 class PrometheusMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next: RequestResponseEndpoint) -> Response:
         method = request.method
-        path = request.url.path
+        path = self.get_path(request)
 
         REQUESTS_IN_PROGRESS.labels(method=method, path=path).inc()
         REQUESTS.labels(method=method, path=path).inc()
@@ -49,3 +50,11 @@ class PrometheusMiddleware(BaseHTTPMiddleware):
             REQUESTS_IN_PROGRESS.labels(method=method, path=path).dec()
 
         return response
+
+    @staticmethod
+    def get_path(request: Request):
+        for route in request.app.routes:
+            match, child_scope = route.matches(request.scope)
+            if match == Match.FULL:
+                return route.path
+        return request.url.path
