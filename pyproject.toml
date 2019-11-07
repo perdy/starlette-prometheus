@@ -11,6 +11,13 @@ license = "GPL-3.0+"
 readme = "README.md"
 repository = "https://github.com/PeRDy/starlette-prometheus"
 keywords = ["starlette", "prometheus", "metrics"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "Topic :: Internet :: WWW/HTTP :: HTTP Servers",
+    "Topic :: Software Development",
+    "Topic :: Software Development :: Libraries",
+]
 include = []
 exclude = []
 
