@@ -21,6 +21,10 @@ class TestCasePrometheusMiddleware:
         def bar(request):
             raise ValueError("bar")
 
+        @app_.route("/foo/{bar}/")
+        def foobar(request):
+            return PlainTextResponse(f"Foo: {request.path_params['bar']}")
+
         return app_
 
     @pytest.fixture
@@ -36,14 +40,20 @@ class TestCasePrometheusMiddleware:
         metrics_text = response.content.decode()
 
         # Asserts: Requests
-        assert 'starlette_requests_total{method="GET",path="/foo/"} 1.0' in metrics_text
+        assert 'starlette_requests_total{method="GET",path="/foo/",path_template="/foo/"} 1.0' in metrics_text
 
         # Asserts: Responses
-        assert 'starlette_responses_total{method="GET",path="/foo/",status_code="200"} 1.0' in metrics_text
+        assert (
+            'starlette_responses_total{method="GET",path="/foo/",path_template="/foo/",status_code="200"} 1.0'
+            in metrics_text
+        )
 
         # Asserts: Requests in progress
-        assert 'starlette_requests_in_progress{method="GET",path="/foo/"} 0.0' in metrics_text
-        assert 'starlette_requests_in_progress{method="GET",path="/metrics/"} 1.0' in metrics_text
+        assert 'starlette_requests_in_progress{method="GET",path="/foo/",path_template="/foo/"} 0.0' in metrics_text
+        assert (
+            'starlette_requests_in_progress{method="GET",path="/metrics/",path_template="/metrics/"} 1.0'
+            in metrics_text
+        )
 
     def test_view_exception(self, client):
         # Do a request
@@ -55,11 +65,45 @@ class TestCasePrometheusMiddleware:
         metrics_text = response.content.decode()
 
         # Asserts: Requests
-        assert 'starlette_requests_total{method="GET",path="/bar/"} 1.0' in metrics_text
+        assert 'starlette_requests_total{method="GET",path="/bar/",path_template="/bar/"} 1.0' in metrics_text
 
         # Asserts: Responses
-        assert 'starlette_exceptions_total{exception_type="ValueError",method="GET",path="/bar/"} 1.0' in metrics_text
+        assert (
+            "starlette_exceptions_total{"
+            'exception_type="ValueError",method="GET",path="/bar/",path_template="/bar/"'
+            "} 1.0" in metrics_text
+        )
 
         # Asserts: Requests in progress
-        assert 'starlette_requests_in_progress{method="GET",path="/bar/"} 0.0' in metrics_text
-        assert 'starlette_requests_in_progress{method="GET",path="/metrics/"} 1.0' in metrics_text
+        assert 'starlette_requests_in_progress{method="GET",path="/bar/",path_template="/bar/"} 0.0' in metrics_text
+        assert (
+            'starlette_requests_in_progress{method="GET",path="/metrics/",path_template="/metrics/"} 1.0'
+            in metrics_text
+        )
+
+    def test_path_substituion(self, client):
+        # Do a request
+        client.get("/foo/baz/")
+
+        # Get metrics
+        response = client.get("/metrics/")
+        metrics_text = response.content.decode()
+
+        # Asserts: Requests
+        assert 'starlette_requests_total{method="GET",path="/foo/baz/",path_template="/foo/{bar}/"} 1.0' in metrics_text
+
+        # Asserts: Responses
+        assert (
+            'starlette_responses_total{method="GET",path="/foo/baz/",path_template="/foo/{bar}/",status_code="200"} 1.0'
+            in metrics_text
+        )
+
+        # Asserts: Requests in progress
+        assert (
+            'starlette_requests_in_progress{method="GET",path="/foo/baz/",path_template="/foo/{bar}/"} 0.0'
+            in metrics_text
+        )
+        assert (
+            'starlette_requests_in_progress{method="GET",path="/metrics/",path_template="/metrics/"} 1.0'
+            in metrics_text
+        )

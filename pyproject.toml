@@ -16,7 +16,7 @@ exclude = []
 
 [tool.poetry.dependencies]
 python = "^3.6"
-starlette = ">=0.12.0"
+starlette = ">=0.12.2"
 prometheus_client = "^0.7"
 
 [tool.poetry.dev-dependencies]
