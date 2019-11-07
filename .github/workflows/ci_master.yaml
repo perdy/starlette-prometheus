@@ -1,0 +1,61 @@
+name: Continuous Integration
+
+on:
+  push:
+    branches:
+      - master
+    tag:
+      - "v[0-9]*.[0-9]*.[0-9]*"
+
+jobs:
+  test:
+    name: Test (Python ${{ matrix.python }})
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python: [3.6, 3.7, 3.8]
+    container:
+      image: python:${{ matrix.python }}
+    steps:
+      - uses: actions/checkout@master
+      - id: install
+        name: Install requirements
+        run: |
+          pip install clinner pip poetry --upgrade
+          python make install
+      - id: black
+        name: Code format checking
+        run: python make black --check .
+      - id: isort
+        name: Imports order checking
+        run: python make isort --check-only
+      - id: flake8
+        name: Code lint
+        run: python make flake8
+      - id: tests
+        name: Tests
+        run: python make test
+      - id: codecov
+        name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v1.0.2
+        # Run on a specific python version and only master branch commits
+        if: matrix.python == 3.8 && github.event_name == 'push' && github.ref == 'refs/heads/master'
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          file: test-results/coverage.xml
+  release:
+    needs: test
+    name: Release a new version
+    runs-on: ubuntu-latest
+    container:
+      image: perdy/github-actions-builder:latest
+    steps:
+      - uses: actions/checkout@master
+        if: github.event_name == 'push' && github.ref != 'refs/heads/master'
+      - id: publish
+        name: Publish version
+        if: github.event_name == 'push' && github.ref != 'refs/heads/master'
+        run: python make publish --build
+        env:
+          PYPI_USERNAME: ${{ secrets.PYPI_USERNAME }}
+          PYPI_PASSWORD: ${{ secrets.PYPI_PASSWORD }}

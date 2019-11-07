@@ -1,0 +1,34 @@
+name: Continuous Integration (Branch)
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  test:
+    name: Test (Python ${{ matrix.python }})
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python: [3.6, 3.7, 3.8]
+    container:
+      image: python:${{ matrix.python }}
+    steps:
+      - uses: actions/checkout@master
+      - id: install
+        name: Install requirements
+        run: |
+          pip install clinner pip poetry --upgrade
+          python make install
+      - id: black
+        name: Code format checking
+        run: python make black --check .
+      - id: isort
+        name: Imports order checking
+        run: python make isort --check-only
+      - id: flake8
+        name: Code lint
+        run: python make flake8
+      - id: tests
+        name: Tests
+        run: python make test

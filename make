@@ -36,7 +36,9 @@ def poetry(*args) -> typing.List[str]:
     :return: Poetry command.
     """
     try:
-        import poetry  # noqa
+        subprocess.run(
+            shlex.split("poetry --version"), check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
+        )  # noqa
     except ImportError:
         if bool_input("Do you want to install Poetry?"):
             with tempfile.NamedTemporaryFile() as tmp_file, urllib.request.urlopen(POETRY_URL) as response:
@@ -55,16 +57,7 @@ def install(*args, **kwargs):
 
 @command(command_type=Type.PYTHON, parser_opts={"help": "Clean directory"})
 def clean(*args, **kwargs):
-    for path in (
-        ".pytest_cache",
-        ".tox",
-        "dist",
-        "pip-wheel-metadata",
-        "flama.egg-info",
-        ".coverage",
-        "test-results",
-        "site",
-    ):
+    for path in (".pytest_cache", "dist", "pip-wheel-metadata", "flama.egg-info", ".coverage", "test-results", "site"):
         shutil.rmtree(path, ignore_errors=True)
 
 
