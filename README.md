@@ -1,11 +1,8 @@
 # Starlette Prometheus
 [![Build Status](https://img.shields.io/circleci/project/github/perdy/flama/master.svg)](https://circleci.com/gh/perdy/flama)
 [![codecov](https://codecov.io/gh/perdy/starlette-prometheus/branch/master/graph/badge.svg)](https://codecov.io/gh/perdy/starlette-prometheus)
-[![PyPI version](https://badge.fury.io/py/starlette-prometheus.svg)](https://badge.fury.io/py/starlette-prometheus)
-
-* **Version:** 0.2.0
-* **Status:** Production/Stable
-* **Author:** José Antonio Perdiguero López
+[![Package Version](https://img.shields.io/pypi/v/starlette-prometheus?logo=PyPI&logoColor=white)](https://pypi.org/project/starlette-prometheus/)
+[![PyPI Version](https://img.shields.io/pypi/pyversions/starlette-prometheus?logo=Python&logoColor=white)](https://pypi.org/project/starlette-prometheus/)
 
 ## Introduction
 
