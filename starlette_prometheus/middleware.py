@@ -21,7 +21,7 @@ REQUESTS_PROCESSING_TIME = Histogram(
 )
 EXCEPTIONS = Counter(
     "starlette_exceptions_total",
-    "Histogram of exceptions raised by path and exception type",
+    "Total count of exceptions raised by path and exception type",
     ["method", "path_template", "exception_type"],
 )
 REQUESTS_IN_PROGRESS = Gauge(
