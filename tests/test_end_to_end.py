@@ -91,3 +91,57 @@ class TestCasePrometheusMiddleware:
         # Asserts: Requests in progress
         assert 'starlette_requests_in_progress{method="GET",path_template="/foo/{bar}/"} 0.0' in metrics_text
         assert 'starlette_requests_in_progress{method="GET",path_template="/metrics/"} 1.0' in metrics_text
+
+    def test_unhandled_paths(self, client):
+        # Do a request
+        client.get("/any/unhandled/path")
+
+        # Get metrics
+        response = client.get("/metrics/")
+        metrics_text = response.content.decode()
+
+        # Asserts: Requests
+        assert 'starlette_requests_total{method="GET",path_template="/any/unhandled/path"} 1.0' in metrics_text
+
+        # Asserts: Responses
+        assert (
+            'starlette_responses_total{method="GET",path_template="/any/unhandled/path",status_code="404"} 1.0' in metrics_text
+        )
+
+        # Asserts: Requests in progress
+        assert 'starlette_requests_in_progress{method="GET",path_template="/any/unhandled/path"} 0.0' in metrics_text
+        assert 'starlette_requests_in_progress{method="GET",path_template="/metrics/"} 1.0' in metrics_text
+
+
+class TestCasePrometheusMiddlewareGroupUnhandledPaths:
+    @pytest.fixture(scope="class")
+    def app(self):
+        app_ = Starlette()
+        app_.add_middleware(PrometheusMiddleware, group_unhandled_paths=True)
+        app_.add_route("/metrics/", metrics)
+
+        return app_
+
+    @pytest.fixture
+    def client(self, app):
+        return TestClient(app)
+
+    def test_group_unhandled_paths(self, client):
+        # Do a request
+        client.get("/any/unhandled/path")
+
+        # Get metrics
+        response = client.get("/metrics/")
+        metrics_text = response.content.decode()
+
+        # Asserts: Requests
+        assert 'starlette_requests_total{method="GET",path_template="unhandled_paths"} 1.0' in metrics_text
+
+        # Asserts: Responses
+        assert (
+            'starlette_responses_total{method="GET",path_template="unhandled_paths",status_code="404"} 1.0' in metrics_text
+        )
+
+        # Asserts: Requests in progress
+        assert 'starlette_requests_in_progress{method="GET",path_template="unhandled_paths"} 0.0' in metrics_text
+        assert 'starlette_requests_in_progress{method="GET",path_template="/metrics/"} 1.0' in metrics_text

@@ -5,6 +5,7 @@ from starlette.middleware.base import BaseHTTPMiddleware, RequestResponseEndpoin
 from starlette.requests import Request
 from starlette.responses import Response
 from starlette.routing import Match
+from starlette.types import ASGIApp
 
 REQUESTS = Counter(
     "starlette_requests_total", "Total count of requests by method and path.", ["method", "path_template"]
@@ -32,6 +33,17 @@ REQUESTS_IN_PROGRESS = Gauge(
 
 
 class PrometheusMiddleware(BaseHTTPMiddleware):
+
+    def __init__(
+            self,
+            app: ASGIApp,
+            group_unhandled_paths: bool = False,
+            unhandled_paths_str: str = "unhandled_paths",
+    ) -> None:
+        super().__init__(app)
+        self.group_unhandled_paths = group_unhandled_paths
+        self.unhandled_paths_str = unhandled_paths_str
+
     async def dispatch(self, request: Request, call_next: RequestResponseEndpoint) -> Response:
         method = request.method
         path_template = self.get_path_template(request)
@@ -55,10 +67,13 @@ class PrometheusMiddleware(BaseHTTPMiddleware):
 
         return response
 
-    @staticmethod
-    def get_path_template(request: Request) -> str:
+    def get_path_template(self, request: Request) -> str:
         for route in request.app.routes:
             match, child_scope = route.matches(request.scope)
             if match == Match.FULL:
                 return route.path
+
+        if self.group_unhandled_paths:
+            return self.unhandled_paths_str
+
         return request.url.path
