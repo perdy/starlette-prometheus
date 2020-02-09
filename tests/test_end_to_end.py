@@ -105,7 +105,8 @@ class TestCasePrometheusMiddleware:
 
         # Asserts: Responses
         assert (
-            'starlette_responses_total{method="GET",path_template="/any/unhandled/path",status_code="404"} 1.0' in metrics_text
+            'starlette_responses_total{method="GET",path_template="/any/unhandled/path",status_code="404"} 1.0'
+            in metrics_text
         )
 
         # Asserts: Requests in progress
@@ -139,7 +140,8 @@ class TestCasePrometheusMiddlewareGroupUnhandledPaths:
 
         # Asserts: Responses
         assert (
-            'starlette_responses_total{method="GET",path_template="unhandled_paths",status_code="404"} 1.0' in metrics_text
+            'starlette_responses_total{method="GET",path_template="unhandled_paths",status_code="404"} 1.0'
+            in metrics_text
         )
 
         # Asserts: Requests in progress

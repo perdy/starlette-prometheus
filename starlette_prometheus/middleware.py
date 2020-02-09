@@ -33,12 +33,8 @@ REQUESTS_IN_PROGRESS = Gauge(
 
 
 class PrometheusMiddleware(BaseHTTPMiddleware):
-
     def __init__(
-            self,
-            app: ASGIApp,
-            group_unhandled_paths: bool = False,
-            unhandled_paths_str: str = "unhandled_paths",
+        self, app: ASGIApp, group_unhandled_paths: bool = False, unhandled_paths_str: str = "unhandled_paths",
     ) -> None:
         super().__init__(app)
         self.group_unhandled_paths = group_unhandled_paths
