@@ -39,9 +39,9 @@ class PrometheusMiddleware(BaseHTTPMiddleware):
         REQUESTS_IN_PROGRESS.labels(method=method, path_template=path_template).inc()
         REQUESTS.labels(method=method, path_template=path_template).inc()
         try:
-            before_time = time.time()
+            before_time = time.perf_counter()
             response = await call_next(request)
-            after_time = time.time()
+            after_time = time.perf_counter()
         except Exception as e:
             EXCEPTIONS.labels(method=method, path_template=path_template, exception_type=type(e).__name__).inc()
             raise e from None
