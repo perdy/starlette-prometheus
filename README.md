@@ -33,6 +33,9 @@ app.add_middleware(PrometheusMiddleware)
 app.add_route("/metrics/", metrics)
 ```
 
+Metrics for paths that do not match any Starlette route can be filtered by passing
+`filter_unhandled_paths=True` argument to `add_middleware` method.
+
 ## Contributing
 
 This project is absolutely open to contributions so if you have a nice idea, create an issue to let the community 

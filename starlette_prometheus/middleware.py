@@ -1,10 +1,12 @@
 import time
+from typing import Tuple
 
 from prometheus_client import Counter, Gauge, Histogram
 from starlette.middleware.base import BaseHTTPMiddleware, RequestResponseEndpoint
 from starlette.requests import Request
 from starlette.responses import Response
 from starlette.routing import Match
+from starlette.types import ASGIApp
 
 REQUESTS = Counter(
     "starlette_requests_total", "Total count of requests by method and path.", ["method", "path_template"]
@@ -32,9 +34,16 @@ REQUESTS_IN_PROGRESS = Gauge(
 
 
 class PrometheusMiddleware(BaseHTTPMiddleware):
+    def __init__(self, app: ASGIApp, filter_unhandled_paths: bool = False) -> None:
+        super().__init__(app)
+        self.filter_unhandled_paths = filter_unhandled_paths
+
     async def dispatch(self, request: Request, call_next: RequestResponseEndpoint) -> Response:
         method = request.method
-        path_template = self.get_path_template(request)
+        path_template, is_handled_path = self.get_path_template(request)
+
+        if self._is_path_filtered(is_handled_path):
+            return await call_next(request)
 
         REQUESTS_IN_PROGRESS.labels(method=method, path_template=path_template).inc()
         REQUESTS.labels(method=method, path_template=path_template).inc()
@@ -56,9 +65,13 @@ class PrometheusMiddleware(BaseHTTPMiddleware):
         return response
 
     @staticmethod
-    def get_path_template(request: Request) -> str:
+    def get_path_template(request: Request) -> Tuple[str, bool]:
         for route in request.app.routes:
             match, child_scope = route.matches(request.scope)
             if match == Match.FULL:
-                return route.path
-        return request.url.path
+                return route.path, True
+
+        return request.url.path, False
+
+    def _is_path_filtered(self, is_handled_path: bool) -> bool:
+        return self.filter_unhandled_paths and not is_handled_path
