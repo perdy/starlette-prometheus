@@ -80,6 +80,9 @@ class TestCasePrometheusMiddleware:
         response = client.get("/metrics/")
         metrics_text = response.content.decode()
 
+        # Asserts: Headers
+        assert response.headers["content-type"] == "text/plain; version=0.0.4; charset=utf-8"
+
         # Asserts: Requests
         assert 'starlette_requests_total{method="GET",path_template="/foo/{bar}/"} 1.0' in metrics_text
 
