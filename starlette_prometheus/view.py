@@ -13,4 +13,4 @@ def metrics(request: Request) -> Response:
     else:
         registry = REGISTRY
 
-    return Response(generate_latest(registry), media_type=CONTENT_TYPE_LATEST)
+    return Response(generate_latest(registry), headers={"Content-Type": CONTENT_TYPE_LATEST})
