@@ -67,6 +67,9 @@ class TestCasePrometheusMiddleware:
             'exception_type="ValueError",method="GET",path_template="/bar/"'
             "} 1.0" in metrics_text
         )
+        assert (
+            "starlette_responses_total{" 'method="GET",path_template="/bar/",status_code="500"' "} 1.0" in metrics_text
+        )
 
         # Asserts: Requests in progress
         assert 'starlette_requests_in_progress{method="GET",path_template="/bar/"} 0.0' in metrics_text
