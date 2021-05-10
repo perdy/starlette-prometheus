@@ -6,6 +6,7 @@ from starlette.middleware.base import BaseHTTPMiddleware, RequestResponseEndpoin
 from starlette.requests import Request
 from starlette.responses import Response
 from starlette.routing import Match
+from starlette.status import HTTP_500_INTERNAL_SERVER_ERROR
 from starlette.types import ASGIApp
 
 REQUESTS = Counter(
@@ -47,19 +48,21 @@ class PrometheusMiddleware(BaseHTTPMiddleware):
 
         REQUESTS_IN_PROGRESS.labels(method=method, path_template=path_template).inc()
         REQUESTS.labels(method=method, path_template=path_template).inc()
+        before_time = time.perf_counter()
         try:
-            before_time = time.perf_counter()
             response = await call_next(request)
-            after_time = time.perf_counter()
         except Exception as e:
+            status_code = HTTP_500_INTERNAL_SERVER_ERROR
             EXCEPTIONS.labels(method=method, path_template=path_template, exception_type=type(e).__name__).inc()
             raise e from None
         else:
+            status_code = response.status_code
+            after_time = time.perf_counter()
             REQUESTS_PROCESSING_TIME.labels(method=method, path_template=path_template).observe(
                 after_time - before_time
             )
-            RESPONSES.labels(method=method, path_template=path_template, status_code=response.status_code).inc()
         finally:
+            RESPONSES.labels(method=method, path_template=path_template, status_code=status_code).inc()
             REQUESTS_IN_PROGRESS.labels(method=method, path_template=path_template).dec()
 
         return response
