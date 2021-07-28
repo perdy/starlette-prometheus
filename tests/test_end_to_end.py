@@ -119,30 +119,6 @@ class TestCasePrometheusMiddleware:
         assert 'starlette_requests_in_progress{method="GET",path_template="/any/unhandled/path"} 0.0' in metrics_text
         assert 'starlette_requests_in_progress{method="GET",path_template="/metrics/"} 1.0' in metrics_text
 
-    def test_prometheus_multiproc_dir(self, client, monkeypatch):
-        # Set environment variable to default os tmp folder
-        monkeypatch.setenv("prometheus_multiproc_dir", "/tmp")
-
-        # Do a request
-        client.get("/foo/")
-
-        # Get metrics
-        response = client.get("/metrics/")
-
-        # Asserts: status code is OK
-        assert response.status_code == 200
-
-        metrics_text = response.content.decode()
-
-        # TODO Asserts: Requests
-        # assert 'starlette_requests_total{method="GET",path_template="/foo/"} 1.0' in metrics_text
-
-        # TODO # Asserts: Responses
-        # assert 'starlette_responses_total{method="GET",path_template="/foo/",status_code="200"} 1.0' in metrics_text
-
-        # TODO # Asserts: Requests in progress
-        # assert 'starlette_requests_in_progress{method="GET",path_template="/foo/"} 0.0' in metrics_text
-        # assert 'starlette_requests_in_progress{method="GET",path_template="/metrics/"} 1.0' in metrics_text
 
 class TestCasePrometheusMiddlewareFilterUnhandledPaths:
     @pytest.fixture(scope="class")
@@ -171,3 +147,62 @@ class TestCasePrometheusMiddlewareFilterUnhandledPaths:
 
         # Asserts: Requests in progress
         assert 'starlette_requests_in_progress{method="GET",path_template="/metrics/"} 1.0' in metrics_text
+
+class TestCasePrometheusMiddlewareMultiproc:
+    @pytest.fixture(scope="class")
+    def app(self):
+        # Set environment variable to default os tmp folder
+        # https://github.com/pytest-dev/pytest/issues/363
+        # https://github.com/prometheus/client_python/blob/master/tests/test_multiprocess.py#L58
+        # from _pytest.monkeypatch import monkeypatch
+        # mpatch = monkeypatch()
+        # yield mpatch
+        # mpatch.undo()
+        # mpatch.setenv("prometheus_multiproc_dir", "/tmp")
+
+        app_ = Starlette()
+        app_.add_middleware(PrometheusMiddleware)
+        app_.add_route("/metrics/", metrics)
+
+        @app_.route("/foo/")
+        def foo(request):
+            return PlainTextResponse("Foo")
+
+        @app_.route("/bar/")
+        def bar(request):
+            raise ValueError("bar")
+
+        @app_.route("/foo/{bar}/")
+        def foobar(request):
+            return PlainTextResponse(f"Foo: {request.path_params['bar']}")
+
+        return app_
+
+    @pytest.fixture
+    def client(self, app):
+        return TestClient(app)
+
+    def test_prometheus_multiproc_dir(self, client, monkeypatch):
+        # Set environment variable to default os tmp folder
+        monkeypatch.setenv("prometheus_multiproc_dir", "/tmp")
+
+        # Do a request
+        client.get("/foo/")
+
+        # Get metrics
+        response = client.get("/metrics/")
+
+        # Asserts: status code is OK
+        assert response.status_code == 200
+
+        metrics_text = response.content.decode()
+
+        # TODO Asserts: Requests
+        # assert 'starlette_requests_total{method="GET",path_template="/foo/"} 1.0' in metrics_text
+
+        # TODO # Asserts: Responses
+        # assert 'starlette_responses_total{method="GET",path_template="/foo/",status_code="200"} 1.0' in metrics_text
+
+        # TODO # Asserts: Requests in progress
+        # assert 'starlette_requests_in_progress{method="GET",path_template="/foo/"} 0.0' in metrics_text
+        # assert 'starlette_requests_in_progress{method="GET",path_template="/metrics/"} 1.0' in metrics_text
