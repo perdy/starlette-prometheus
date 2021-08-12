@@ -34,7 +34,9 @@ app.add_route("/metrics/", metrics)
 ```
 
 Metrics for paths that do not match any Starlette route can be filtered by passing
-`filter_unhandled_paths=True` argument to `add_middleware` method.
+`filter_unhandled_paths=True` argument to `add_middleware` method.  Note that not
+turning on this filtering can lead to unbounded memory use when lots of different
+routes are called.
 
 ## Contributing
 
