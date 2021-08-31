@@ -10,11 +10,14 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python: [3.6, 3.7, 3.8]
+        python: [3.6, 3.7, 3.8, 3.9]
     container:
       image: python:${{ matrix.python }}
     steps:
       - uses: actions/checkout@master
+        with:
+          fetch-depth: 0
+      - uses: wagoid/commitlint-github-action@v1
       - id: install
         name: Install requirements
         run: |

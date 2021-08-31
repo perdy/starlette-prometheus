@@ -52,7 +52,7 @@ def poetry(*args) -> typing.List[str]:
 
 @command(command_type=Type.SHELL, parser_opts={"help": "Install requirements"})
 def install(*args, **kwargs):
-    return [poetry("install", *args)]
+    return [poetry("install", "-E", "full", *args)]
 
 
 @command(command_type=Type.PYTHON, parser_opts={"help": "Clean directory"})
@@ -61,8 +61,15 @@ def clean(*args, **kwargs):
         shutil.rmtree(path, ignore_errors=True)
 
 
-@command(command_type=Type.SHELL, parser_opts={"help": "Build package"})
+@command(
+    command_type=Type.SHELL,
+    args=((("-c", "--clean"), {"help": "Clean before build"}),),
+    parser_opts={"help": "Build package"},
+)
 def build(*args, **kwargs):
+    if kwargs["clean"]:
+        clean()
+
     return [poetry("build", *args)]
 
 
@@ -96,29 +103,14 @@ def docs(*args, **kwargs):
     return [poetry("run", "mkdocs", *args)]
 
 
-@command(command_type=Type.PYTHON, parser_opts={"help": "Upgrade version"})
+@command(command_type=Type.SHELL, parser_opts={"help": "Upgrade version"})
 def version(*args, **kwargs):
-    if toml is None:
-        logger.error("Package toml is not installed, run 'pip install toml' to install it")
-        return -1
-
-    old_version = toml.load("pyproject.toml")["tool"]["poetry"]["version"]
-
-    subprocess.run(poetry("version", *args))
-
-    new_version = toml.load("pyproject.toml")["tool"]["poetry"]["version"]
-
-    subprocess.run(shlex.split(f"git add pyproject.toml poetry.lock"))
-    subprocess.run(shlex.split(f'git commit -m "Bumping version from {old_version} to {new_version}"'))
-    subprocess.run(shlex.split(f"git tag v{new_version}"))
+    return [poetry("version", *args)]
 
 
 @command(
     command_type=Type.SHELL,
-    args=(
-        (("--version",), {"help": "Version to upgrade", "choices": ("patch", "minor", "major")}),
-        (("-b", "--build"), {"help": "Build package", "action": "store_true"}),
-    ),
+    args=((("-b", "--build"), {"help": "Build package", "action": "store_true"}),),
     parser_opts={"help": "Publish package"},
 )
 def publish(*args, **kwargs):
@@ -130,11 +122,8 @@ def publish(*args, **kwargs):
     if username and password:
         cmds.append(poetry("config", "http-basic.pypi", username, password))
 
-    if kwargs.get("version", None):
-        version(version=kwargs["version"])
-
     if kwargs["build"]:
-        cmds += build()
+        cmds += build(clean=True)
 
     cmds.append(poetry("publish"))
 

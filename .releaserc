@@ -1,0 +1,58 @@
+{
+  "branch": "master",
+  "plugins": [
+    [
+      "semantic-release-gitmoji",
+      {
+        "releaseRules": {
+          "major": [
+            ":boom:"
+          ],
+          "minor": [
+            ":sparkles:"
+          ],
+          "patch": [
+            ":bug:",
+            ":ambulance:",
+            ":lock:"
+          ]
+        }
+      }
+    ],
+    [
+      "@semantic-release/changelog",
+      {
+        "changelogFile": "CHANGELOG.md",
+        "changelogTitle": "# Semantic Versioning Changelog"
+      }
+    ],
+    [
+      "@semantic-release/exec",
+      {
+        "prepareCmd": "python make version ${nextRelease.version}",
+        "publishCmd": "python make publish --build"
+      }
+    ],
+    [
+      "@semantic-release/git",
+      {
+        "message": ":bookmark: ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}",
+        "assets": [
+          "CHANGELOG.md",
+          "pyproject.toml",
+          "poetry.lock"
+        ]
+      }
+    ],
+    [
+      "@semantic-release/github",
+      {
+        "assets": [
+          {
+            "path": "dist/**"
+          }
+        ]
+      }
+    ]
+  ]
+}

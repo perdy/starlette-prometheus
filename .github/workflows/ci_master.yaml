@@ -4,8 +4,6 @@ on:
   push:
     branches:
       - master
-    tags:
-      - "v[0-9]*.[0-9]*.[0-9]*"
 
 jobs:
   test:
@@ -13,11 +11,14 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python: [3.6, 3.7, 3.8]
+        python: [3.6, 3.7, 3.8, 3.9]
     container:
       image: python:${{ matrix.python }}
     steps:
       - uses: actions/checkout@master
+        with:
+          fetch-depth: 0
+      - uses: wagoid/commitlint-github-action@v1
       - id: install
         name: Install requirements
         run: |
@@ -39,7 +40,7 @@ jobs:
         name: Upload coverage to Codecov
         uses: codecov/codecov-action@v1.0.2
         # Run on a specific python version and only master branch commits
-        if: matrix.python == 3.8 && github.event_name == 'push' && github.ref == 'refs/heads/master'
+        if: matrix.python == 3.9 && github.event_name == 'push' && github.ref == 'refs/heads/master'
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           file: test-results/coverage.xml
@@ -51,11 +52,14 @@ jobs:
       image: perdy/github-actions-builder:latest
     steps:
       - uses: actions/checkout@master
-        if: github.event_name == 'push' && github.ref != 'refs/heads/master'
+      - name: Setup node
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12
       - id: publish
         name: Publish version
-        if: github.event_name == 'push' && github.ref != 'refs/heads/master'
-        run: python make publish --build
+        run: npx semantic-release
         env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_ACTIONS_TOKEN }}
           PYPI_USERNAME: ${{ secrets.PYPI_USERNAME }}
           PYPI_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
