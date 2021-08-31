@@ -60,6 +60,6 @@ jobs:
         name: Publish version
         run: npx semantic-release
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_ACTIONS_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
           PYPI_USERNAME: ${{ secrets.PYPI_USERNAME }}
           PYPI_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
