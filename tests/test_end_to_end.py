@@ -75,7 +75,7 @@ class TestCasePrometheusMiddleware:
         assert 'starlette_requests_in_progress{method="GET",path_template="/bar/"} 0.0' in metrics_text
         assert 'starlette_requests_in_progress{method="GET",path_template="/metrics/"} 1.0' in metrics_text
 
-    def test_path_substituion(self, client):
+    def test_path_substitution(self, client):
         # Do a request
         client.get("/foo/baz/")
 
