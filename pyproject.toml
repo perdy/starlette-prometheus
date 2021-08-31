@@ -17,6 +17,7 @@ classifiers = [
     "Topic :: Internet :: WWW/HTTP :: HTTP Servers",
     "Topic :: Software Development",
     "Topic :: Software Development :: Libraries",
+    "Topic :: Software Development :: Libraries :: Application Frameworks"
 ]
 include = []
 exclude = []
@@ -24,20 +25,20 @@ exclude = []
 [tool.poetry.dependencies]
 python = "^3.6"
 starlette = ">=0.12.2"
-prometheus_client = "^0.8"
+prometheus_client = "^0.11"
 
 [tool.poetry.dev-dependencies]
-pytest = "^3.6"
+pytest = "^5.0"
 pytest-xdist = "^1.22"
-pytest-cov = "^2.5"
-tox = "^3.0"
-clinner = "^1.10"
-ipython = "^6.4"
-requests = "^2.19"
-ipdb = "^0.11.0"
+pytest-cov = "^2.0"
+clinner = "^1.12"
+ipython = "^7.0"
+requests = "^2.22.0"
+ipdb = "^0.11"
 black = {version = "^19.3b0",allow-prereleases = true}
 isort = "^4.3"
 flake8 = "^3.7"
+Faker = "^8.2.0"
 
 [tool.black]
 line-length = 120
