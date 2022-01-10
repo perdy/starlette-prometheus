@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+import typing
+
 import logging
 import os
 import shlex
@@ -7,7 +9,6 @@ import shutil
 import subprocess
 import sys
 import tempfile
-import typing
 import urllib.request
 
 logger = logging.getLogger("cli")

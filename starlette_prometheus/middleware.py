@@ -1,6 +1,6 @@
-import time
 from typing import Tuple
 
+import time
 from prometheus_client import Counter, Gauge, Histogram
 from starlette.middleware.base import BaseHTTPMiddleware, RequestResponseEndpoint
 from starlette.requests import Request

@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python: [3.6, 3.7, 3.8, 3.9]
+        python: ["3.7", "3.8", "3.9", "3.10"]
     container:
       image: python:${{ matrix.python }}
     steps:
@@ -29,7 +29,7 @@ jobs:
         run: python make black --check .
       - id: isort
         name: Imports order checking
-        run: python make isort --check-only
+        run: python make isort --check .
       - id: flake8
         name: Code lint
         run: python make flake8
@@ -55,7 +55,7 @@ jobs:
       - name: Setup node
         uses: actions/setup-node@v1
         with:
-          node-version: 12
+          node-version: 14
       - id: publish
         name: Publish version
         run: npx semantic-release

@@ -1,5 +1,4 @@
 import os
-
 from prometheus_client import CONTENT_TYPE_LATEST, REGISTRY, CollectorRegistry, generate_latest
 from prometheus_client.multiprocess import MultiProcessCollector
 from starlette.requests import Request
