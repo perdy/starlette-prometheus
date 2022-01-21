@@ -32,7 +32,7 @@ pytest = "^6.0"
 pytest-xdist = "^2.0"
 pytest-cov = "^3.0"
 clinner = "^1.12"
-ipython = "^7.0"
+ipython = "^7.31"
 requests = "^2.27"
 ipdb = "^0.13"
 black = {version = "^19.3b0",allow-prereleases = true}
