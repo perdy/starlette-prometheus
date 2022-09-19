@@ -8,7 +8,6 @@ from starlette.responses import Response
 from starlette.routing import Match
 from starlette.status import HTTP_500_INTERNAL_SERVER_ERROR
 from starlette.types import ASGIApp
-
 REQUESTS = Counter(
     "starlette_requests_total", "Total count of requests by method and path.", ["method", "path_template"]
 )
@@ -31,6 +30,7 @@ REQUESTS_IN_PROGRESS = Gauge(
     "starlette_requests_in_progress",
     "Gauge of requests by method and path currently being processed",
     ["method", "path_template"],
+    multiprocess_mode='livesum'
 )
 
 
