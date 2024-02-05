@@ -6,7 +6,7 @@ from starlette.responses import Response
 
 
 def metrics(request: Request) -> Response:
-    if "prometheus_multiproc_dir" in os.environ:
+    if "prometheus_multiproc_dir" in os.environ or "PROMETHEUS_MULTIPROC_DIR" in os.environ:
         registry = CollectorRegistry()
         MultiProcessCollector(registry)
     else:
