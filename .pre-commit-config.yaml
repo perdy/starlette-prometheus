@@ -23,13 +23,13 @@ repos:
         stages: [commit-msg]
 -   repo: local
     hooks:
-    -   id: flake8
-        name: Flake8 - Code Linter
-        entry: poetry run flake8
+    -   id: ruff
+        name: Code Linter
+        entry: poetry run ruff
         language: system
         types: [python]
     -   id: black
-        name: Black - Code Style
+        name: Code Style
         entry: poetry run black
         args:
         - -q
@@ -38,7 +38,7 @@ repos:
         language: system
         types: [python]
     -   id: isort
-        name: Isort - Sort Imports
+        name: Sort Imports
         entry: poetry run isort
         args:
         - -e

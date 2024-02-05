@@ -1,6 +1,5 @@
 # Starlette Prometheus
 [![Build Status](https://github.com/perdy/starlette-prometheus/workflows/Continuous%20Integration/badge.svg)](https://github.com/perdy/starlette-prometheus/actions)
-[![codecov](https://codecov.io/gh/perdy/starlette-prometheus/branch/master/graph/badge.svg)](https://codecov.io/gh/perdy/starlette-prometheus)
 [![Package Version](https://img.shields.io/pypi/v/starlette-prometheus?logo=PyPI&logoColor=white)](https://pypi.org/project/starlette-prometheus/)
 [![PyPI Version](https://img.shields.io/pypi/pyversions/starlette-prometheus?logo=Python&logoColor=white)](https://pypi.org/project/starlette-prometheus/)
 
@@ -10,8 +9,8 @@ Prometheus integration for Starlette.
 
 ## Requirements
 
-* Python 3.6+
-* Starlette 0.9+
+* Python 3.8+
+* Starlette 0.12+
 
 ## Installation
 
