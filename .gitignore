@@ -9,6 +9,7 @@ __pycache__/
 # Distribution / packaging
 .Python
 env/
+.venv/
 build/
 develop-eggs/
 dist/
@@ -25,7 +26,6 @@ var/
 *.egg
 *dist/
 pip-wheel-metadata/
-.python-version
 
 # Installer logs
 pip-log.txt
@@ -53,4 +53,5 @@ node_modules
 *.vscode
 
 ## Demo & Tests
-*.db
+demo.db
+test.db

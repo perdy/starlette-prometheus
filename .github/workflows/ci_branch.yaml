@@ -29,9 +29,9 @@ jobs:
       - id: isort
         name: Imports order checking
         run: python make isort --check .
-      - id: flake8
+      - id: ruff
         name: Code lint
-        run: python make flake8
+        run: python make ruff .
       - id: tests
         name: Tests
         run: python make test

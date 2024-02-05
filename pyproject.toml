@@ -4,7 +4,7 @@ build-backend = "poetry.masonry.api"
 
 [tool.poetry]
 name = "starlette-prometheus"
-version = "0.9.0"
+version = "0.8.0"
 description = "Prometheus integration for Starlette"
 authors = ["José Antonio Perdiguero López <perdy@perdy.io>"]
 license = "GPL-3.0+"
@@ -23,21 +23,25 @@ include = []
 exclude = []
 
 [tool.poetry.dependencies]
-python = "^3.7"
+python = "^3.8"
 starlette = ">=0.12.2"
-prometheus_client = "^0.12"
+prometheus_client = ">=0.12"
 
-[tool.poetry.dev-dependencies]
-pytest = "^6.0"
-pytest-xdist = "^2.0"
+[tool.poetry.group.dev]
+optional = true
+
+[tool.poetry.group.dev.dependencies]
+httpx = "^0.26.0"
+isort = "^5.12"
+ruff = "^0.0.292"
+black = "^23.9"
+pytest = "^7.0"
+pytest-xdist = "^3.0"
 pytest-cov = "^3.0"
 clinner = "^1.12"
 ipython = "^7.0"
 requests = "^2.27"
 ipdb = "^0.13"
-black = {version = "^19.3b0",allow-prereleases = true}
-isort = "^5.0"
-flake8 = "^4.0"
 Faker = "^8.2.0"
 
 [tool.black]
@@ -46,8 +50,48 @@ include = '\.pyi?$'
 exclude = '''
 /(
     \.git
-  | \.tox
+  | \.venv
   | build
   | dist
 )/
 '''
+
+[tool.isort]
+profile = "black"
+atomic = true
+multi_line_output = 3
+include_trailing_comma = true
+line_length = 120
+skip_glob = [
+    "*/.venv/**",
+    "*/docs/**",
+    "*/build/**",
+    "*/dist/**",
+]
+
+[tool.ruff]
+line-length = 120
+# Enable Pyflakes and pycodestyle rules.
+select = ["E", "F"]
+ignore = ["E721"]
+exclude = [
+    ".git",
+    ".pytest_cache",
+    ".mypy_cache",
+    ".ruff_cache",
+    ".venv",
+    "buck-out",
+    "build",
+    "dist",
+    "node_modules",
+]
+# Allow unused variables when underscore-prefixed.
+dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+
+[tool.ruff.per-file-ignores]
+"__init__.py" = ["E402"]
+
+[tool.ruff.mccabe]
+# Unlike Flake8, default to a complexity level of 10.
+max-complexity = 10
+

@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python: ["3.7", "3.8", "3.9", "3.10"]
+        python: ["3.8", "3.9", "3.10", "3.11", "3.12"]
     container:
       image: python:${{ matrix.python }}
     steps:
@@ -30,20 +30,12 @@ jobs:
       - id: isort
         name: Imports order checking
         run: python make isort --check .
-      - id: flake8
+      - id: ruff
         name: Code lint
-        run: python make flake8
+        run: python make ruff .
       - id: tests
         name: Tests
         run: python make test
-      - id: codecov
-        name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v1.0.2
-        # Run on a specific python version and only master branch commits
-        if: matrix.python == 3.9 && github.event_name == 'push' && github.ref == 'refs/heads/master'
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          file: test-results/coverage.xml
   release:
     needs: test
     name: Release a new version

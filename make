@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-import typing
-
 import logging
 import os
 import shlex
@@ -9,6 +7,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import typing
 import urllib.request
 
 logger = logging.getLogger("cli")
@@ -74,24 +73,24 @@ def build(*args, **kwargs):
     return [poetry("build", *args)]
 
 
-@command(command_type=Type.SHELL, parser_opts={"help": "Black code formatting"})
+@command(command_type=Type.SHELL, parser_opts={"help": "Code formatting"})
 def black(*args, **kwargs):
     return [poetry("run", "black", *args)]
 
 
-@command(command_type=Type.SHELL, parser_opts={"help": "Flake8 code analysis"})
-def flake8(*args, **kwargs):
-    return [poetry("run", "flake8", *args)]
+@command(command_type=Type.SHELL, parser_opts={"help": "Code analysis"})
+def ruff(*args, **kwargs):
+    return [poetry("run", "ruff", "check", *args)]
 
 
-@command(command_type=Type.SHELL, parser_opts={"help": "Isort imports formatting"})
+@command(command_type=Type.SHELL, parser_opts={"help": "Imports formatting"})
 def isort(*args, **kwargs):
     return [poetry("run", "isort", *args)]
 
 
 @command(command_type=Type.SHELL, parser_opts={"help": "Code lint using multiple tools"})
 def lint(*args, **kwargs):
-    return black() + flake8() + isort()
+    return black(".") + ruff(".") + isort(".")
 
 
 @command(command_type=Type.SHELL, parser_opts={"help": "Run tests"})
@@ -132,7 +131,7 @@ def publish(*args, **kwargs):
 
 
 class Make(Main):
-    commands = ("install", "clean", "build", "publish", "black", "flake8", "isort", "lint", "test", "version", "docs")
+    commands = ("install", "clean", "build", "publish", "black", "ruff", "isort", "lint", "test", "version", "docs")
 
 
 def main():
