@@ -30,6 +30,7 @@ REQUESTS_IN_PROGRESS = Gauge(
     "starlette_requests_in_progress",
     "Gauge of requests by method and path currently being processed",
     ["method", "path_template"],
+    multiprocess_mode='livesum'
 )
 
 
