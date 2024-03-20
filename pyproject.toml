@@ -34,7 +34,7 @@ optional = true
 httpx = "^0.26.0"
 isort = "^5.12"
 ruff = "^0.0.292"
-black = "^23.9"
+black = ">=23.9,<25.0"
 pytest = "^7.0"
 pytest-xdist = "^3.0"
 pytest-cov = "^3.0"
